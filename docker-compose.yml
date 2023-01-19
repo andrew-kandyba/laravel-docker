@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  nginx:
+    image: "laravel-app/nginx:development"
+    container_name: laravel-app-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - application_ssl:/etc/ssl-custom:ro
+      - application_public:/app/public:cached
+
+volumes:
+  application_public:
+    name: application_public
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $PWD/application/public
+
+  application_ssl:
+    name: application_ssl
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $PWD/environment/ssl
