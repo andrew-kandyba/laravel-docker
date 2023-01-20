@@ -1,8 +1,16 @@
 version: '3.7'
 services:
+  mysql:
+    image: "laravel-app/mysql:development"
+    container_name: laravel-app-mysql
+    volumes:
+      - mysql:/var/lib/mysql
+
   php:
     image: "laravel-app/php:development"
     container_name: laravel-app-php
+    depends_on:
+      - mysql
     volumes:
       - php-socket:/var/run/php
       - application:/app:cached
@@ -21,6 +29,7 @@ services:
       - application_public:/app/public:cached
 
 volumes:
+  mysql:
   php-socket:
 
   application:
