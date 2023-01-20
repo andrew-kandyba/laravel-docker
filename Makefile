@@ -28,6 +28,11 @@ build: ## Building application images.
 	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(IMAGE_PHP):$(IMAGE_LABEL) \
 						--target $(IMAGE_LABEL) $(IMAGE_PHP_CONTEXT)
 
+build-laravel: ## Building laravel-app skeleton.
+	@rm -rf $(PWD)/application
+	@composer create-project --no-install --no-scripts laravel/laravel $(PWD)/application
+	@cp $(PWD)/laravel-env.example $(PWD)/application/.env.example
+
 start: ## Create and start application containers.
 	@make .generate-ssl
 	@docker-compose up -d
@@ -35,6 +40,9 @@ start: ## Create and start application containers.
 stop: ## Stop and remove containers and resources.
 	@docker-compose down -v
 	@make .clean-ssl
+
+shell: ## Get shell inside php container.
+	@docker-compose exec php /bin/ash
 
 .generate-ssl:
 	@mkdir -p $(SSL_DIRECTORY)
