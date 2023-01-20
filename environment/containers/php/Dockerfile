@@ -14,7 +14,6 @@ FROM base_image as development
 ENV PHP_IDE_CONFIG="serverName=127.0.0.1"
 COPY --link ./config/php.ini $PHP_INI_DIR/
 COPY --link ./config/supervisor.conf /etc/supervisor/
-COPY --link ./config/worker.conf /etc/supervisor/conf.d/
 COPY --link ./entrypoint.sh /usr/local/bin/docker-entrypoint
 COPY --link ./config/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 RUN set -eux; install-php-extensions xdebug && \
