@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1.4
+
 # Base image declaration
 FROM nginx:1.23.3-alpine-slim as base_image
 WORKDIR /app
