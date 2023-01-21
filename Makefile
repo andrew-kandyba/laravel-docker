@@ -2,7 +2,6 @@
 .PHONY: help
 
 # Internal variables:
-APP_DOMAIN := "math-solver.localhost"
 DISABLE_XDEBUG := XDEBUG_MODE=off
 ENABLE_DOCKER_BUILDKIT := DOCKER_BUILDKIT=1
 
