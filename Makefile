@@ -31,6 +31,7 @@ build-laravel: ## Building laravel-app skeleton.
 	@rm -rf $(PWD)/application
 	@composer create-project --no-install --no-scripts laravel/laravel $(PWD)/application
 	@cp $(PWD)/laravel-env.example $(PWD)/application/.env.example
+	@cp $(PWD)/application/.env.example $(PWD)/application/.env
 
 start: ## Create and start application containers.
 	@make .generate-ssl
