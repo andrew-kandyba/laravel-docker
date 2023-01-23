@@ -2,7 +2,6 @@
 .PHONY: help
 
 # Internal variables:
-DISABLE_XDEBUG := XDEBUG_MODE=off
 ENABLE_DOCKER_BUILDKIT := DOCKER_BUILDKIT=1
 
 IMAGE_LABEL := "development"
