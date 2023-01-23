@@ -27,6 +27,7 @@ services:
       - php-socket:/var/run/php
       - application_ssl:/etc/ssl-custom:ro
       - application_public:/app/public:cached
+      - application_storage:/app/storage/app:cached
 
 volumes:
   mysql:
@@ -47,6 +48,14 @@ volumes:
       type: none
       o: bind
       device: $PWD/application/public
+
+  application_storage:
+    name: application_storage
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $PWD/application/storage/app
 
   application_ssl:
     name: application_ssl
