@@ -11,7 +11,15 @@ RUN apk add --no-cache supervisor && \
 
 # Development image declaration
 FROM base_image as development
-ENV PHP_IDE_CONFIG="serverName=127.0.0.1"
+ARG DB \
+    DB_PASS \
+    DB_PORT \
+    DOMAIN
+ENV PHP_IDE_CONFIG="serverName=127.0.0.1" \
+    DB=$DB \
+    DB_PORT=$DB_PORT \
+    DB_PASS=$DB_PASS \
+    DOMAIN=$DOMAIN
 COPY --link ./config/php.ini $PHP_INI_DIR/
 COPY --link ./config/supervisor.conf /etc/supervisor/
 COPY --link ./entrypoint.sh /usr/local/bin/docker-entrypoint

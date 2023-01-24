@@ -8,7 +8,7 @@ php artisan route:cache
 php artisan event:cache
 php artisan view:cache
 
-while ! nc -z -v mysql 3306; do echo "Waiting mysql container...:3" && sleep 3; done;
+while ! nc -z -v mysql ${DB_PORT}; do echo "Waiting mysql container...:3" && sleep 3; done;
 php artisan migrate
 
 php artisan queue:restart

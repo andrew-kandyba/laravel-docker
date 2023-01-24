@@ -1,43 +1,47 @@
+include $(PWD)/docker.env
+export
+
 .DEFAULT_GOAL := help
 .PHONY: help
 
 # Internal variables:
 ENABLE_DOCKER_BUILDKIT := DOCKER_BUILDKIT=1
-
-IMAGE_LABEL := "development"
-IMAGE_MYSQL := "laravel-app/mysql"
-IMAGE_MYSQL_CONTEXT := "$(PWD)/environment/containers/mysql/."
-IMAGE_NGINX := "laravel-app/nginx"
-IMAGE_NGINX_CONTEXT := "$(PWD)/environment/containers/nginx/."
-IMAGE_PHP := "laravel-app/php"
-IMAGE_PHP_CONTEXT := "$(PWD)/environment/containers/php/."
-
-SSL_DIRECTORY := "$(PWD)/environment/ssl/"
+ENV_FILE := --env-file $(PWD)/docker.env
+SSL_DIRECTORY := "$(PWD)/environment/ssl"
 
 # Available commands:
+test:
+	env
 help:
 	@grep -E '^[a-zA-Z-]+:.*?## .*$$' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "[32m%-27s[0m %s\n", $$1, $$2}'
 
 build: ## Building application images.
 	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(IMAGE_MYSQL):$(IMAGE_LABEL) \
+						--build-arg DATABASE=$(MYSQL_DATABASE) \
+						--build-arg PORT=$(MYSQL_PORT) \
+						--build-arg ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
 						--target $(IMAGE_LABEL) $(IMAGE_MYSQL_CONTEXT)
 	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(IMAGE_NGINX):$(IMAGE_LABEL) \
                                                 --target $(IMAGE_LABEL) $(IMAGE_NGINX_CONTEXT)
 	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(IMAGE_PHP):$(IMAGE_LABEL) \
+						--build-arg DOMAIN=$(LOCALHOST_DOMAIN) \
+						--build-arg DB=$(MYSQL_DATABASE) \
+						--build-arg DB_PASS=$(MYSQL_ROOT_PASSWORD) \
+						--build-arg DB_PORT=$(MYSQL_PORT) \
 						--target $(IMAGE_LABEL) $(IMAGE_PHP_CONTEXT)
 
 build-laravel: ## Building laravel-app skeleton.
-	@rm -rf $(PWD)/application
-	@composer create-project --no-install --no-scripts laravel/laravel $(PWD)/application
-	@cp $(PWD)/laravel-env.example $(PWD)/application/.env.example
-	@cp $(PWD)/application/.env.example $(PWD)/application/.env
+	@rm -rf $(LARAVEL_DIRECTORY)
+	@composer create-project --no-install --no-scripts laravel/laravel $(LARAVEL_DIRECTORY)
+	@cp $(PWD)/laravel-env.example $(LARAVEL_DIRECTORY)/.env.example
+	@cp $(LARAVEL_DIRECTORY)/.env.example $(LARAVEL_DIRECTORY)/.env
 
 start: ## Create and start application containers.
 	@make .generate-ssl
-	@docker-compose up -d
+	@docker-compose $(ENV_FILE) up -d
 
 stop: ## Stop and remove containers and resources.
-	@docker-compose down -v
+	@docker-compose $(ENV_FILE) down -v
 	@make .clean-ssl
 
 shell: ## Get shell inside php container.
@@ -46,7 +50,7 @@ shell: ## Get shell inside php container.
 .generate-ssl:
 	@mkdir -p $(SSL_DIRECTORY)
 	@mkcert --install && \
-	mkcert -cert-file $(SSL_DIRECTORY)/mkcert-cert.pem -key-file $(SSL_DIRECTORY)/mkcert-key.pem laravel-app.localhost
+	mkcert -cert-file $(SSL_DIRECTORY)/mkcert-cert.pem -key-file $(SSL_DIRECTORY)/mkcert-key.pem $(LOCALHOST_DOMAIN)
 
 .clean-ssl:
 	@rm -rf $(SSL_DIRECTORY)

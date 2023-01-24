@@ -1,14 +1,16 @@
 version: '3.7'
 services:
   mysql:
-    image: "laravel-app/mysql:development"
-    container_name: laravel-app-mysql
+    image: "${IMAGE_MYSQL}:${IMAGE_LABEL}"
+    container_name: ${PROJECT}-mysql
+    # expose:
+    #   - ${MYSQL_PORT}
     volumes:
       - mysql:/var/lib/mysql
 
   php:
-    image: "laravel-app/php:development"
-    container_name: laravel-app-php
+    image: "${IMAGE_PHP}:${IMAGE_LABEL}"
+    container_name: ${PROJECT}-php
     depends_on:
       - mysql
     volumes:
@@ -16,13 +18,13 @@ services:
       - application:/app:cached
 
   nginx:
-    image: "laravel-app/nginx:development"
-    container_name: laravel-app-nginx
+    image: "${IMAGE_NGINX}:${IMAGE_LABEL}"
+    container_name: ${PROJECT}-nginx
     depends_on:
       - php
     ports:
-      - "80:80"
-      - "443:443"
+      - "${HTTP_PORT}:80"
+      - "${HTTPS_PORT}:443"
     volumes:
       - php-socket:/var/run/php
       - application_ssl:/etc/ssl-custom:ro
@@ -39,7 +41,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: $PWD/application
+      device: "${LARAVEL_DIRECTORY}"
 
   application_public:
     name: application_public
@@ -47,7 +49,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: $PWD/application/public
+      device: ${LARAVEL_DIRECTORY}/public
 
   application_storage:
     name: application_storage
@@ -55,7 +57,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: $PWD/application/storage/app
+      device: ${LARAVEL_DIRECTORY}/storage/app
 
   application_ssl:
     name: application_ssl
