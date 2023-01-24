@@ -6,7 +6,7 @@ ENV LC_ALL=POSIX
 WORKDIR /app
 COPY --from=mlocati/php-extension-installer:1.5.52 --link /usr/bin/install-php-extensions /usr/local/bin/
 COPY --from=composer/composer:2.5.1-bin --link /composer /usr/bin/composer
-RUN apk add --no-cache supervisor && \
+RUN apk add --no-cache supervisor fcgi && \
     set -eux; install-php-extensions intl zip apcu opcache pcntl bcmath pdo_mysql
 
 # Development image declaration
@@ -22,10 +22,13 @@ ENV PHP_IDE_CONFIG="serverName=127.0.0.1" \
     DOMAIN=$DOMAIN
 COPY --link ./config/php.ini $PHP_INI_DIR/
 COPY --link ./config/supervisor.conf /etc/supervisor/
+COPY --link ./healthcheck.sh /usr/local/bin/docker-healthcheck
 COPY --link ./entrypoint.sh /usr/local/bin/docker-entrypoint
 COPY --link ./config/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 RUN set -eux; install-php-extensions xdebug && \
     chmod +x /usr/local/bin/docker-entrypoint && \
+    chmod +x /usr/local/bin/docker-healthcheck && \
     mkdir -p /var/run/php
+HEALTHCHECK --interval=20s --timeout=3s --retries=3 CMD ["docker-healthcheck"]
 CMD ["php-fpm"]
 ENTRYPOINT ["docker-entrypoint"]
