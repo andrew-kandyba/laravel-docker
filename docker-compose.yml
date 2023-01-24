@@ -1,15 +1,13 @@
 version: '3.7'
 services:
   mysql:
-    image: "${IMAGE_MYSQL}:${IMAGE_LABEL}"
+    image: "${PROJECT}/mysql:${IMAGE_LABEL}"
     container_name: ${PROJECT}-mysql
-    # expose:
-    #   - ${MYSQL_PORT}
     volumes:
       - mysql:/var/lib/mysql
 
   php:
-    image: "${IMAGE_PHP}:${IMAGE_LABEL}"
+    image: "${PROJECT}/php:${IMAGE_LABEL}"
     container_name: ${PROJECT}-php
     depends_on:
       - mysql
@@ -18,7 +16,7 @@ services:
       - application:/app:cached
 
   nginx:
-    image: "${IMAGE_NGINX}:${IMAGE_LABEL}"
+    image: "${PROJECT}/nginx:${IMAGE_LABEL}"
     container_name: ${PROJECT}-nginx
     depends_on:
       - php

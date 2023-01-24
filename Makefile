@@ -16,19 +16,19 @@ help:
 	@grep -E '^[a-zA-Z-]+:.*?## .*$$' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "[32m%-27s[0m %s\n", $$1, $$2}'
 
 build: ## Building application images.
-	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(IMAGE_MYSQL):$(IMAGE_LABEL) \
+	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(PROJECT)/mysql:$(IMAGE_LABEL) \
 						--build-arg DATABASE=$(MYSQL_DATABASE) \
 						--build-arg PORT=$(MYSQL_PORT) \
 						--build-arg ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
-						--target $(IMAGE_LABEL) $(IMAGE_MYSQL_CONTEXT)
-	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(IMAGE_NGINX):$(IMAGE_LABEL) \
-                                                --target $(IMAGE_LABEL) $(IMAGE_NGINX_CONTEXT)
-	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(IMAGE_PHP):$(IMAGE_LABEL) \
+						--target $(IMAGE_LABEL) $(IMAGE_CONTEXT)/mysql/.
+	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(PROJECT)/nginx:$(IMAGE_LABEL) \
+                                                --target $(IMAGE_LABEL) $(IMAGE_CONTEXT)/nginx/.
+	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(PROJECT)/php:$(IMAGE_LABEL) \
 						--build-arg DOMAIN=$(LOCALHOST_DOMAIN) \
 						--build-arg DB=$(MYSQL_DATABASE) \
 						--build-arg DB_PASS=$(MYSQL_ROOT_PASSWORD) \
 						--build-arg DB_PORT=$(MYSQL_PORT) \
-						--target $(IMAGE_LABEL) $(IMAGE_PHP_CONTEXT)
+						--target $(IMAGE_LABEL) $(IMAGE_CONTEXT)/php/.
 
 build-laravel: ## Building laravel-app skeleton.
 	@rm -rf $(LARAVEL_DIRECTORY)

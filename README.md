@@ -38,13 +38,8 @@ To see a list of available commands, run :
 | ------ | ------ | ------ |
 |  HTTP_PORT      |  80      |        |
 |  HTTPS_PORT      |   443     |        |
+|  IMAGE_CONTEXT      |   $(PWD)/environment/containers/.     |        |
 |  IMAGE_LABEL      |   development     |        |
-|  IMAGE_MYSQL      |   laravel-app/mysql     |        |
-|  IMAGE_MYSQL_CONTEXT      |   $(PWD)/environment/containers/mysql/.     |        |
-|  IMAGE_NGINX      |   laravel-app/nginx     |        |
-|  IMAGE_NGINX_CONTEXT      |   $(PWD)/environment/containers/nginx/.     |        |
-|  IMAGE_PHP      |   laravel-app/php     |        |
-|  IMAGE_PHP_CONTEXT      |   $(PWD)/environment/containers/php/.     |        |
 |  LARAVEL_DIRECTORY      |   $(PWD)/application     |        |
 |  LOCALHOST_DOMAIN      |   laravel-app.localhost     |        |
 |  MYSQL_DATABASE      |   laravel-app-db     |        |
