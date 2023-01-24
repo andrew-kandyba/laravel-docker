@@ -10,8 +10,6 @@ ENV_FILE := --env-file $(PWD)/docker.env
 SSL_DIRECTORY := "$(PWD)/environment/ssl"
 
 # Available commands:
-test:
-	env
 help:
 	@grep -E '^[a-zA-Z-]+:.*?## .*$$' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "[32m%-27s[0m %s\n", $$1, $$2}'
 
