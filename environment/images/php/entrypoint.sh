@@ -11,7 +11,4 @@ php artisan view:cache
 while ! nc -z -v mysql ${DB_PORT}; do echo "Waiting mysql container...:3" && sleep 3; done;
 php artisan migrate
 
-php artisan queue:restart
-/usr/bin/supervisord -c /etc/supervisor/supervisor.conf
-
 exec "$@"
