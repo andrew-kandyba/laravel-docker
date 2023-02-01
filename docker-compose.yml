@@ -13,7 +13,7 @@ services:
       - mysql
     volumes:
       - php-socket:/var/run/php
-      - application:/app:cached
+      - ${LARAVEL_DIRECTORY}:/app:cached
 
   nginx:
     image: "${PROJECT}/nginx:${IMAGE_LABEL}"
@@ -25,42 +25,10 @@ services:
       - "${HTTPS_PORT}:443"
     volumes:
       - php-socket:/var/run/php
-      - application_ssl:/etc/ssl-custom:ro
-      - application_public:/app/public:cached
-      - application_storage:/app/storage/app:cached
+      - $PWD/environment/ssl:/etc/ssl-custom:ro
+      - ${LARAVEL_DIRECTORY}/public:/app/public:cached
+      - ${LARAVEL_DIRECTORY}/storage/app:/app/storage/app:cached
 
 volumes:
   mysql:
   php-socket:
-
-  application:
-    name: application
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: "${LARAVEL_DIRECTORY}"
-
-  application_public:
-    name: application_public
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${LARAVEL_DIRECTORY}/public
-
-  application_storage:
-    name: application_storage
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${LARAVEL_DIRECTORY}/storage/app
-
-  application_ssl:
-    name: application_ssl
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $PWD/environment/ssl
