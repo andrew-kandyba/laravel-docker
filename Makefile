@@ -20,12 +20,15 @@ build: ## Building application images.
 						--build-arg ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
 						--target $(IMAGE_LABEL) $(IMAGE_CONTEXT)/mysql/.
 	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(PROJECT)/nginx:$(IMAGE_LABEL) \
+						--build-arg GID=$(shell id -g) \
                                                 --target $(IMAGE_LABEL) $(IMAGE_CONTEXT)/nginx/.
 	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(PROJECT)/php:$(IMAGE_LABEL) \
 						--build-arg DOMAIN=$(LOCALHOST_DOMAIN) \
 						--build-arg DB=$(MYSQL_DATABASE) \
 						--build-arg DB_PASS=$(MYSQL_ROOT_PASSWORD) \
 						--build-arg DB_PORT=$(MYSQL_PORT) \
+						--build-arg UID=$(shell id -u) \
+						--build-arg GID=$(shell id -g) \
 						--target $(IMAGE_LABEL) $(IMAGE_CONTEXT)/php/.
 
 build-laravel: ## Building laravel-app skeleton.
