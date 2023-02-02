@@ -1,0 +1,26 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    name: app-flow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install mkcert
+        run: make -f ./.github/Makefile .install-mkcert
+      - name: Build laravel-app skeleton
+        run: make build-laravel
+      - name: Build docker images
+        run: make build
+      - name: Start docker containers
+        run: make start
+      - name: Wait for healthy services
+        uses: raschmitt/wait-for-healthy-container@v1
+        with:
+          container-name: laravel-app-php
+          timeout: 90
+      - name: Check HTTPS reachability
+        run: curl https://laravel-app.localhost
