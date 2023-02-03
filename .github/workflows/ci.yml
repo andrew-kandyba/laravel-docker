@@ -1,10 +1,11 @@
+---
 name: ci
 on:
-  push:
-  pull_request:
+  push: null
+  pull_request: null
 jobs:
-  build:
-    name: app-flow
+  app-build:
+    name: build-app
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,3 +25,15 @@ jobs:
           timeout: 90
       - name: Check HTTPS reachability
         run: curl https://laravel-app.localhost
+  hadolint:
+    name: run-hadolint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run hadolint
+        uses: hadolint/hadolint-action@v3.0.0
+        with:
+          recursive: true
+          ignore: DL3018
+
