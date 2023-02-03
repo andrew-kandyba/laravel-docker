@@ -1,17 +1,82 @@
 # laravel-docker
-A sandbox for developing [laravel](https://laravel.com) applications.
+[![ci](https://github.com/andrew-kandyba/laravel-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/andrew-kandyba/laravel-docker/actions/workflows/ci.yml)&nbsp; [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
+A sandbox for developing [laravel](https://laravel.com) applications. 
+
+```bash
+> php: 8.2.1-fmp-alpine.3.17
+> nginx: 1.23-3-alpine
+> mysql: 8.0.32
+```
+
+<details><summary><i>PHP modules</i></summary>
+
+```bash
+> 🐼 laravel-docker git:(main) ✗ docker exec -ti laravel-app-php /usr/local/bin/php -m
+
+[PHP Modules]
+apcu
+bcmath
+Core
+ctype
+curl
+date
+dom
+fileinfo
+filter
+ftp
+hash
+iconv
+intl
+json
+libxml
+mbstring
+mysqlnd
+openssl
+pcntl
+pcre
+PDO
+pdo_mysql
+pdo_sqlite
+Phar
+posix
+random
+readline
+Reflection
+session
+SimpleXML
+sodium
+SPL
+sqlite3
+standard
+tokenizer
+xdebug
+xml
+xmlreader
+xmlwriter
+Zend OPcache
+zip
+zlib
+
+[Zend Modules]
+Xdebug
+Zend OPcache
+```
+
+</details>
 
 #### Features
 
-* Automatic HTTPS ([mkcert required]())
-* HTTP/2 support
-* [XDebug](docs/xdebug.md) and Supervisord integration
-* Clean and well-structured configuration.
-* Easy setup with a few commands.
+* Automatic HTTPS ([mkcert required]()).
+* HTTP/2 support.
+* [XDebug](docs/xdebug.md) integration.
+* Clean and easy setup.
+* Well-structured configuration.
 * Trusted base images.
 
-## :triangular_flag_on_post: Requirments
+## :cop: Requirments
 * [mkcert](https://github.com/FiloSottile/mkcert)
+* [composer](https://github.com/composer/composer)
 * [docker (v19.03.12 or late)](https://docs.docker.com/engine/install/ubuntu/)
 * [docker-compose (v1.26.0 or late)](https://docs.docker.com/compose/install/)
 
@@ -26,36 +91,53 @@ A sandbox for developing [laravel](https://laravel.com) applications.
 ```bash
 > make build-laravel
 ```
-> By default laravel project will be created into `./application` directory. You can change this via `$LARAVEL_DIRECTORY` variable.
->
-> Please see [config](#pizza-config) and [build-laravel](https://github.com/andrew-kandyba/laravel-docker/blob/main/Makefile#L31-L35) for more info.
+Fresh laravel project will be created into `./application` directory, it can be changed via `$LARAVEL_DIRECTORY`.
+
+>**Note**
+Please see [config](#pizza-config) and [build-laravel](https://github.com/andrew-kandyba/laravel-docker/blob/main/Makefile#L31-L35) for more info.
 
 ### 3. Build the docker images
 ```bash
 > make build
 ```
-> By default will be created next images: `laravel-app/mysql`, `laravel-app/nginx`, `laravel-app/php`. \
-> You can change image repository part (`laravel-app...`) via `$PROJECT` variable.
->
-> Please see [config](#pizza-config) and [build](https://github.com/andrew-kandyba/laravel-docker/blob/81ae70ec6729a3aac24efaa6581bc0f7b051e2c8/Makefile#L16-L29) for more info.
+Will be created: `laravel-app/mysql`, `laravel-app/nginx`, `laravel-app/php`.
+```bash
+> 🐼 laravel-docker git:(main) ✗ docker images                                                        
+
+REPOSITORY          TAG           IMAGE ID       CREATED          SIZE
+laravel-app/php     development   f8cde6e5a0f7   43 minutes ago   122MB
+laravel-app/nginx   development   5ca2bb4b6959   46 minutes ago   13.8MB
+laravel-app/mysql   development   4b49e5f0f347   46 minutes ago   517MB
+```
+You may change image repository part (`laravel-app...`) via `$PROJECT`.
+>**Note**
+Please see [config](#pizza-config) and [build](https://github.com/andrew-kandyba/laravel-docker/blob/81ae70ec6729a3aac24efaa6581bc0f7b051e2c8/Makefile#L16-L29) for more info.
 
 ### 4. Run containers
 ```bash
 > make start
 ```
-> By default will be created next containers: `laravel-app-mysql`, `laravel-app-nginx`, `laravel-app-php`. \
-> You can change container name (`laravel-app...`) via `$PROJECT` variable. \
-> Also will be created a ssl certificate (need [mkcert](https://github.com/FiloSottile/mkcert)) for `laravel-app.localhost`, you can set other domain via `$LOCALHOST_DOMAIN` variable.
->
-> Please see [config](#pizza-config) and [start](https://github.com/andrew-kandyba/laravel-docker/blob/main/Makefile#L37-L39) + [.generate-ssl](https://github.com/andrew-kandyba/laravel-docker/blob/ea072ba1f92de7db625829394764c8eac631fdcf/Makefile#L48-L51) for more info.
+Will be created: `laravel-app-mysql`, `laravel-app-nginx`, `laravel-app-php`.
+```bash
+> 🐼 laravel-docker git:(main) ✗ docker ps --format "table {{.Names}}\t{{.Ports}}\t{{.Image}}"
+      
+NAMES               PORTS                                      IMAGE
+laravel-app-nginx   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   laravel-app/nginx:development
+laravel-app-php     9000/tcp                                   laravel-app/php:development
+laravel-app-mysql   3306/tcp, 33060/tcp                        laravel-app/mysql:development
+```
+You may change container name (`laravel-app...`) via `$PROJECT`. \
+Also will be created a ssl certificate (need [mkcert](https://github.com/FiloSottile/mkcert)) for `laravel-app.localhost`, it can be changed via `$LOCALHOST_DOMAIN`.
+>**Note**
+Please see [config](#pizza-config) and [start](https://github.com/andrew-kandyba/laravel-docker/blob/main/Makefile#L37-L39) + [.generate-ssl](https://github.com/andrew-kandyba/laravel-docker/blob/ea072ba1f92de7db625829394764c8eac631fdcf/Makefile#L48-L51) for more info.
 
 ### 5. Stop containers
 ```bash
 > make stop
 ```
-> Applications containers + resources (ssl, volumes...etc) will be stopped and deleted.
->
-> Please see [stop](https://github.com/andrew-kandyba/laravel-docker/blob/main/Makefile#L41-L43) for more info.
+Applications containers + resources (ssl, volumes...etc) will be stopped and deleted.
+>**Note**
+Please see [stop](https://github.com/andrew-kandyba/laravel-docker/blob/main/Makefile#L41-L43) for more info.
 
 ### Make
 To see a list of available commands:
@@ -64,7 +146,8 @@ To see a list of available commands:
 ```
 
 ## :pizza: Config
-[`./docker.env`](https://github.com/andrew-kandyba/laravel-docker/blob/main/docker.env) - docker environment variables
+[`./laravel-env.example`](https://github.com/andrew-kandyba/laravel-docker/blob/main/laravel-env.example) - laravel application config. \
+[`./docker.env`](https://github.com/andrew-kandyba/laravel-docker/blob/main/docker.env) - environment variables.
 
 | Name | Default |Comment       |
 |:------|:------|:------|
