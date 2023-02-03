@@ -24,7 +24,7 @@ jobs:
           container-name: laravel-app-php
           timeout: 90
       - name: Check HTTPS reachability
-        run: curl https://laravel-app.localhost
+        run: curl -I https://laravel-app.localhost
   hadolint:
     name: run-hadolint
     runs-on: ubuntu-latest

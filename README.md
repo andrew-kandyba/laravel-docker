@@ -62,17 +62,15 @@ zlib
 Xdebug
 Zend OPcache
 ```
-
 </details>
 
 #### Features
 
-* Automatic HTTPS ([mkcert required]()).
+* Automatic HTTPS.
 * HTTP/2 support.
 * [XDebug](docs/xdebug.md) integration.
 * Clean and easy setup.
-* Well-structured configuration.
-* Trusted base images.
+* Well-structured.
 
 ## :cop: Requirments
 * [mkcert](https://github.com/FiloSottile/mkcert)
@@ -82,9 +80,12 @@ Zend OPcache
 
 ## :dancer: Usage
 
-### 1. Clone the repository
+### 1. Clone the repository and remove needless directories
 ```bash
 > git clone git@github.com:andrew-kandyba/laravel-docker.git
+
+> 🐼 laravel-docker git:(main) rm -rf .git/
+> 🐼 laravel-docker git:(main) rm -rf .github/
 ```
 
 ### 2. Create a laravel application skeleton
@@ -94,7 +95,7 @@ Zend OPcache
 Fresh laravel project will be created into `./application` directory, it can be changed via `$LARAVEL_DIRECTORY`.
 
 >**Note**
-Please see [config](#pizza-config) and [build-laravel](https://github.com/andrew-kandyba/laravel-docker/blob/main/Makefile#L31-L35) for more info.
+Please see [config](#pizza-config) and [build-laravel](https://github.com/andrew-kandyba/laravel-docker/blob/HEAD/Makefile#L34-L38) for more info.
 
 ### 3. Build the docker images
 ```bash
@@ -102,7 +103,7 @@ Please see [config](#pizza-config) and [build-laravel](https://github.com/andrew
 ```
 Will be created: `laravel-app/mysql`, `laravel-app/nginx`, `laravel-app/php`.
 ```bash
-> 🐼 laravel-docker git:(main) ✗ docker images                                                        
+> 🐼 laravel-docker git:(main) ✗ docker images
 
 REPOSITORY          TAG           IMAGE ID       CREATED          SIZE
 laravel-app/php     development   f8cde6e5a0f7   43 minutes ago   122MB
@@ -111,7 +112,7 @@ laravel-app/mysql   development   4b49e5f0f347   46 minutes ago   517MB
 ```
 You may change image repository part (`laravel-app...`) via `$PROJECT`.
 >**Note**
-Please see [config](#pizza-config) and [build](https://github.com/andrew-kandyba/laravel-docker/blob/81ae70ec6729a3aac24efaa6581bc0f7b051e2c8/Makefile#L16-L29) for more info.
+Please see [config](#pizza-config) and [build](https://github.com/andrew-kandyba/laravel-docker/blob/HEAD/Makefile#L16-L32) for more info.
 
 ### 4. Run containers
 ```bash
@@ -129,7 +130,7 @@ laravel-app-mysql   3306/tcp, 33060/tcp                        laravel-app/mysql
 You may change container name (`laravel-app...`) via `$PROJECT`. \
 Also will be created a ssl certificate (need [mkcert](https://github.com/FiloSottile/mkcert)) for `laravel-app.localhost`, it can be changed via `$LOCALHOST_DOMAIN`.
 >**Note**
-Please see [config](#pizza-config) and [start](https://github.com/andrew-kandyba/laravel-docker/blob/main/Makefile#L37-L39) + [.generate-ssl](https://github.com/andrew-kandyba/laravel-docker/blob/ea072ba1f92de7db625829394764c8eac631fdcf/Makefile#L48-L51) for more info.
+Please see [config](#pizza-config) and [start](https://github.com/andrew-kandyba/laravel-docker/blob/HEAD/Makefile#L40-L42) + [.generate-ssl](https://github.com/andrew-kandyba/laravel-docker/blob/HEAD/Makefile#L51-L54) for more info.
 
 ### 5. Stop containers
 ```bash
@@ -137,12 +138,18 @@ Please see [config](#pizza-config) and [start](https://github.com/andrew-kandyba
 ```
 Applications containers + resources (ssl, volumes...etc) will be stopped and deleted.
 >**Note**
-Please see [stop](https://github.com/andrew-kandyba/laravel-docker/blob/main/Makefile#L41-L43) for more info.
+Please see [stop](https://github.com/andrew-kandyba/laravel-docker/blob/HEAD/Makefile#L44-L46) for more info.
 
 ### Make
 To see a list of available commands:
 ```bash
 > make
+
+build           Building application images.
+build-laravel   Building laravel-app skeleton.
+start           Create and start application containers.
+stop            Stop and remove containers and resources.
+shell           Get shell inside php container.
 ```
 
 ## :pizza: Config
