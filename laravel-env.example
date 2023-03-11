@@ -1,4 +1,4 @@
-# Based on .env.example (Laravel Framework 9.48.0)
+# Based on .env.example (Laravel Framework 10.0)
 
 APP_NAME=Laravel
 APP_ENV=local
@@ -31,7 +31,7 @@ REDIS_PASSWORD=null
 REDIS_PORT=6379
 
 MAIL_MAILER=smtp
-MAIL_HOST=mailhog
+MAIL_HOST=mailpit
 MAIL_PORT=1025
 MAIL_USERNAME=null
 MAIL_PASSWORD=null
