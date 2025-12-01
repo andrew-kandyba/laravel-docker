@@ -1,57 +1,28 @@
-include $(PWD)/docker.env
-export
-
 .DEFAULT_GOAL := help
-.PHONY: help
+.PHONY: help build install start stop restart shell test lint
 
-# Internal variables:
-ENABLE_DOCKER_BUILDKIT := DOCKER_BUILDKIT=1
-ENV_FILE := --env-file $(PWD)/docker.env
-SSL_DIRECTORY := "$(PWD)/environment/ssl"
-
-# Available commands:
 help:
-	@grep -E '^[a-zA-Z-]+:.*?## .*$$' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "[32m%-27s[0m %s\n", $$1, $$2}'
+	@grep --no-filename --extended-regexp '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-26s\033[0m %s\n", $$1, $$2}'
 
-build: ## Building application images.
-	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(PROJECT)/mysql:$(IMAGE_LABEL) \
-						--build-arg DATABASE=$(MYSQL_DATABASE) \
-						--build-arg PORT=$(MYSQL_PORT) \
-						--build-arg ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
-						--target $(IMAGE_LABEL) $(IMAGE_CONTEXT)/mysql/.
-	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(PROJECT)/nginx:$(IMAGE_LABEL) \
-						--build-arg GID=$(shell id -g) \
-                                                --target $(IMAGE_LABEL) $(IMAGE_CONTEXT)/nginx/.
-	@$(ENABLE_DOCKER_BUILDKIT) docker build --tag $(PROJECT)/php:$(IMAGE_LABEL) \
-						--build-arg DOMAIN=$(LOCALHOST_DOMAIN) \
-						--build-arg DB=$(MYSQL_DATABASE) \
-						--build-arg DB_PASS=$(MYSQL_ROOT_PASSWORD) \
-						--build-arg DB_PORT=$(MYSQL_PORT) \
-						--build-arg UID=$(shell id -u) \
-						--build-arg GID=$(shell id -g) \
-						--target $(IMAGE_LABEL) $(IMAGE_CONTEXT)/php/.
+build: ## Build PHP image
+	@docker compose build
 
-build-laravel: ## Building laravel-app skeleton.
-	@rm -rf $(LARAVEL_DIRECTORY)
-	@composer create-project --no-install --no-scripts laravel/laravel $(LARAVEL_DIRECTORY)
-	@cp $(PWD)/laravel-env.example $(LARAVEL_DIRECTORY)/.env.example
-	@cp $(LARAVEL_DIRECTORY)/.env.example $(LARAVEL_DIRECTORY)/.env
+install: ## Install Laravel
+	@docker compose run --rm php composer create-project laravel/laravel .
 
-start: ## Create and start application containers.
-	@make .generate-ssl
-	@docker-compose $(ENV_FILE) up -d
+start: ## Start containers
+	@docker compose up -d
 
-stop: ## Stop and remove containers and resources.
-	@docker-compose $(ENV_FILE) down -v
-	@make .clean-ssl
+stop: ## Stop and remove containers
+	@docker compose down
 
-shell: ## Get shell inside php container.
-	@docker-compose exec php /bin/ash
+restart: stop start ## Restart all containers
 
-.generate-ssl:
-	@mkdir -p $(SSL_DIRECTORY)
-	@mkcert --install && \
-	mkcert -cert-file $(SSL_DIRECTORY)/mkcert-cert.pem -key-file $(SSL_DIRECTORY)/mkcert-key.pem $(LOCALHOST_DOMAIN)
+shell: ## Open shell in PHP container
+	@docker compose exec php /bin/ash
 
-.clean-ssl:
-	@rm -rf $(SSL_DIRECTORY)
+test: ## Run tests
+	@docker compose run --rm php php artisan test
+
+lint: ## Run linter
+	@docker compose run --rm php ./vendor/bin/pint -v --test --preset per
