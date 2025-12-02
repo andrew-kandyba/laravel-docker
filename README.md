@@ -52,20 +52,22 @@ Your application is available at: **[http://localhost](http://localhost)**
 > make test     Run tests
 ```
 
-## Debug
+## Debugging
+
+### Xdebug
 Pre-configured for debugging with:
 - Host: `host.docker.internal`
 - Port: `9003`
 - IDE Key: `PHPSTORM`
 
-### PhpStorm
+#### PhpStorm
 1. Go to **Settings → PHP → Servers**
 2. Create server with name: `laravel-sandbox`
 3. Set host: `localhost`, port: `80`
 4. Enable path mappings: `./app → /var/www`
 5. Start listening for connections
 
-### VSCode
+#### VSCode
 Add to `.vscode/launch.json`:
 
 ```json
@@ -79,6 +81,27 @@ Add to `.vscode/launch.json`:
   }
 }
 ```
+
+### Buggregator
+
+This environment comes with **[Buggregator](https://docs.buggregator.dev/)** pre-configured — a local telemetry hub for Laravel development that provides:
+
+* **Mail capture** (SMTP on port `1025`)
+* **VarDumper server** (`9912`)
+* **XHProf / Profiler**
+* **Inspector events**
+* **HTTP / logs inspection**
+
+All required settings are already included in the `php` container.
+
+No additional configuration is needed — Buggregator receives data automatically after starting the containers:
+
+```bash
+> make start
+```
+
+All telemetry becomes available in the web UI at **[http://localhost:8000](http://localhost:8000)**.
+
 
 ## License
 This project is licensed under the MIT License - see the [**LICENSE**](LICENSE.md) file for details.
