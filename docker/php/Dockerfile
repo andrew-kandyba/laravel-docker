@@ -7,7 +7,7 @@ RUN install-php-extensions $extensions \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
 FROM base AS development
-ARG extensions="xdebug"
+ARG extensions="xdebug xhprof"
 COPY --link ./php.ini ${PHP_INI_DIR}/
 COPY --link ./www.conf /usr/local/etc/php-fpm.d/www.conf
 
