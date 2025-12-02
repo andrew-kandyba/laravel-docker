@@ -5,17 +5,49 @@ services:
     image: laravel-sandbox/php:dev
     container_name: laravel-sandbox.php
     environment:
+      INSPECTOR_URL: "http://inspector@buggregator:8000"
+      INSPECTOR_ENABLE: true
+      INSPECTOR_API_KEY: laravel-sandbox
+      INSPECTOR_INGESTION_KEY: laravel-sandbox
+      MAIL_MAILER: smtp
+      MAIL_HOST: buggregator
+      MAIL_PORT: 1025
       PHP_IDE_CONFIG: serverName=laravel-sandbox
+      PROFILER_APP_NAME: "LARAVEL SANDBOX"
+      PROFILER_ENDPOINT: "http://profiler@buggregator:8000"
+      VAR_DUMPER_FORMAT: server
+      VAR_DUMPER_SERVER: buggregator:9912
+      XHPROF_ENABLED: true
     volumes:
       - ./app:/var/www:cached
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    networks:
+      - laravel-sandbox
 
   nginx:
     image: nginx:alpine
     container_name: laravel-sandbox.nginx
     ports:
-      - "80:80"
+      - "127.0.0.1:80:80"
     volumes:
       - ./app:/var/www
       - ./docker/nginx/app.conf:/etc/nginx/conf.d/app.conf
+    networks:
+      - laravel-sandbox
+
+  buggregator:
+    image: ghcr.io/buggregator/server:dev
+    container_name: laravel-sandbox.buggregator
+    ports:
+      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:9912:9912"
+      - "127.0.0.1:9913:9913"
+    networks:
+      - laravel-sandbox
+
+networks:
+  laravel-sandbox:
+    name: laravel-sandbox
+    driver: bridge
