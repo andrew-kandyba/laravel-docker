@@ -9,6 +9,8 @@ services:
       INSPECTOR_ENABLE: true
       INSPECTOR_API_KEY: laravel-sandbox
       INSPECTOR_INGESTION_KEY: laravel-sandbox
+      LOG_STACK: socket,daily
+      LOG_SOCKET_URL: buggregator:9913
       MAIL_MAILER: smtp
       MAIL_HOST: buggregator
       MAIL_PORT: 1025
@@ -20,6 +22,7 @@ services:
       XHPROF_ENABLED: true
     volumes:
       - ./app:/var/www:cached
+      - ./packages:/var/local:cached
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
